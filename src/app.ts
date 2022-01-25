@@ -1,23 +1,25 @@
 import express, { Express } from "express";
+import { inject, injectable } from "inversify";
+import "reflect-metadata";
 import { Server } from 'http';
 import { ExeptionFilter } from "./errrors/exeption.filter";
 import { ILogger } from "./logger/logger.interface";
 import { UserController } from "./users/users.controller";
+import { TYPES } from "./types";
 
+@injectable()
 export class App {
 	app: Express;
 	server: Server;
 	port: number;
-	logger: ILogger;
-	userController: UserController;
-	exeptionFilter: ExeptionFilter;
 
-	constructor(logger: ILogger, 	userController: UserController, exeptionFilter: ExeptionFilter) {
+	constructor(
+		@inject(TYPES.Logger) private loggerService: ILogger,
+		@inject(TYPES.UserController) private userController: UserController,
+		@inject(TYPES.ExeptionFilter) private exeptionFilter: ExeptionFilter
+	) {
 		this.app = express();
 		this.port = 8000;
-		this.logger = logger;
-		this.userController = userController;
-		this.exeptionFilter = exeptionFilter;
 	}
 
 	useRoutes() {
@@ -33,6 +35,6 @@ export class App {
 		this.useExeptionFilters();
 		this.server = this.app.listen(this.port);
 
-		this.logger.log(`Server on http://localhost:${this.port}`);
+		this.loggerService.log(`Server on http://localhost:${this.port}`);
 	}
 }
