@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { LoggerService } from "../logger/logger.service";
-import { IExeptionFilter } from "./exeption.filter.interface";
+import { IExeptionFilter } from "./exeption.interface";
 import { HTTPError } from "./http-error.class";
 
 
