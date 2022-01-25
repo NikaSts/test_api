@@ -1,4 +1,4 @@
-import { Response, Request, NextFunction } from "express";
+import { Response, Request, NextFunction } from 'express';
 
 export interface IUserController {
 	login: (req: Request, res: Response, next: NextFunction) => void;
