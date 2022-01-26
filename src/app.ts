@@ -6,6 +6,7 @@ import { ExeptionFilter } from './errrors/exeption.filter';
 import { ILogger } from './logger/logger.interface';
 import { UserController } from './users/users.controller';
 import { TYPES } from './types';
+import { json } from 'body-parser';
 
 @injectable()
 export class App {
@@ -14,12 +15,16 @@ export class App {
 	port: number;
 
 	constructor(
-		@inject(TYPES.Logger) private loggerService: ILogger,
+		@inject(TYPES.Logger) private logger: ILogger,
 		@inject(TYPES.UserController) private userController: UserController,
 		@inject(TYPES.ExeptionFilter) private exeptionFilter: ExeptionFilter,
 	) {
 		this.app = express();
 		this.port = 8000;
+	}
+
+	useMiddleware() {
+		this.app.use(json());
 	}
 
 	useRoutes() {
@@ -31,10 +36,11 @@ export class App {
 	}
 
 	public async init() {
+		this.useMiddleware();
 		this.useRoutes();
 		this.useExeptionFilters();
 		this.server = this.app.listen(this.port);
 
-		this.loggerService.log(`Server on http://localhost:${this.port}`);
+		this.logger.log(`Server on http://localhost:${this.port}`);
 	}
 }
