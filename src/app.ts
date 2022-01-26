@@ -7,6 +7,7 @@ import { ILogger } from './logger/logger.interface';
 import { IUserController } from './users/users.controller.interface';
 import { TYPES } from './types';
 import { json } from 'body-parser';
+import { IConfigService } from './config/config.interface';
 
 @injectable()
 export class App {
@@ -18,6 +19,7 @@ export class App {
 		@inject(TYPES.Logger) private logger: ILogger,
 		@inject(TYPES.UserController) private userController: IUserController,
 		@inject(TYPES.ExeptionFilter) private exeptionFilter: IExeptionFilter,
+		@inject(TYPES.ConfigService) private configService: IConfigService,
 	) {
 		this.app = express();
 		this.port = 8000;
