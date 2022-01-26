@@ -5,20 +5,40 @@ import { UserRegisterDto } from './dto/user-register.dto';
 import { IUserService } from './users.service.interface';
 import { TYPES } from '../types';
 import { IConfigService } from '../config/config.interface';
+import { IUsersRepository } from './users.repository.interface';
+import { UserModel } from '@prisma/client';
 
 @injectable()
 export class UserService implements IUserService {
-	constructor(@inject(TYPES.ConfigService) private configService: IConfigService) {}
-	async createUser(dto: UserRegisterDto): Promise<User | null> {
+	constructor(
+		@inject(TYPES.ConfigService) private configService: IConfigService,
+		@inject(TYPES.UsersRepository) private usersRepository: IUsersRepository,
+	) {}
+
+	async createUser(dto: UserRegisterDto): Promise<UserModel | null> {
 		const { email, name, password } = dto;
 		const newUser = new User(email, name);
 		const salt = this.configService.get<number>('SALT');
+
 		await newUser.setPassword(password, Number(salt));
 
-		return null;
+		const existedUser = await this.usersRepository.find(email);
+		if (existedUser) {
+			return null;
+		}
+
+		return this.usersRepository.create(newUser);
 	}
 
 	async validateUser(dto: UserLoginDto): Promise<boolean> {
-		return true;
+		const { email, password } = dto;
+		const existedUser = await this.usersRepository.find(email);
+		if (!existedUser) {
+			return false;
+		}
+		const newUser = new User(email, '');
+		await newUser.setPassword(password, 10);
+
+		return newUser.comparePassword(password, existedUser.password);
 	}
 }
