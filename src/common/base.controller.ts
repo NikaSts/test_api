@@ -4,9 +4,10 @@ import 'reflect-metadata';
 import { ILogger } from '../logger/logger.interface';
 import { IControllerRoute } from './route.interface';
 import { TYPES } from '../types';
+import { IBaseController } from './base.controller.interface';
 
 @injectable()
-export abstract class BaseController {
+export abstract class BaseController implements IBaseController {
 	private readonly _router: Router;
 
 	constructor(@inject(TYPES.Logger) protected logger: ILogger) {
