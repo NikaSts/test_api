@@ -51,4 +51,8 @@ export class App {
 
 		this.logger.log(`Server on http://localhost:${this.port}`);
 	}
+
+	public close(): void {
+		this.server.close();
+	}
 }
